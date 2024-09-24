@@ -497,6 +497,9 @@ function updateCalendar(availability, businessDays) {
         }
     }
 
+// 現在時刻を取得
+const now = new Date();
+
 // テーブルの内容を更新
 for (let i = 0; i < 7; i++) {
     const day = new Date(currentDate);
@@ -519,6 +522,15 @@ for (let i = 0; i < 7; i++) {
 
         const slotEnd = new Date(slotStart);
         slotEnd.setMinutes(slotStart.getMinutes() + 30);
+
+        // リアルタイムの時刻を過ぎたセルは強制的に✕にする
+        if (slotEnd <= now) {
+            cell.textContent = '✕';
+            cell.classList.remove('available');
+            cell.classList.add('unavailable');
+            cell.setAttribute('data-date', slotStart.toISOString());
+            continue; // 他の条件を無視して次のセルへ
+        }
 
         const isBusinessDay = businessDays.some(businessDay => {
             const businessDayStart = new Date(businessDay.start);
